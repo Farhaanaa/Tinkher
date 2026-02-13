@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧠 MediMind
 
-## Getting Started
+AI-Powered Medication Adherence & Risk Prevention System
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 📌 Problem Statement
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Medication non-adherence remains one of the most critical challenges in healthcare today. Studies show that nearly 50% of patients fail to follow prescribed medication schedules, leading to preventable complications, disease progression, and hospitalizations.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Missed, delayed, or inconsistent medication intake often goes unnoticed until serious health risks arise. There is a need for a proactive system that not only tracks medication usage but also identifies risk patterns and supports users in maintaining consistent treatment routines.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 💡 Solution
 
-To learn more about Next.js, take a look at the following resources:
+MediMind is a smart medication adherence system designed to help individuals track their medications, monitor consistency, and prevent treatment interruptions.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The platform transforms simple medication logs into meaningful insights through adherence scoring, intelligent risk alerts, and refill prediction logic.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🚀 Key Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- 📋 Medication Registration & Schedule Setup
+- ⏰ Dose Logging (Taken / Skipped / Delayed)
+- 📊 Real-time Adherence Score Calculation
+- ⚠️ Risk Alerts for repeated missed doses
+- 💊 Refill Prediction based on remaining pills
+- 📈 Pattern Detection using rule-based logic
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🛠️ Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Language:** TypeScript
+- **State Management:** React State + localStorage
+- **Logic Engine:** Rule-based adherence & risk detection
+- **Deployment:** (Add your hosting link here)
+
+---
+
+## 🌍 Live Demo
+
+🔗 Hosted Link: (Add after deployment)
+
+---
+
+## ⚙️ MVP Architecture Decision
+
+This hackathon version intentionally uses local state and browser storage instead of a cloud database.
+
+The focus was on building a stable, fully functional MVP under time constraints, ensuring core adherence logic, risk detection, and refill prediction were implemented reliably.
+
+The system is architected in a way that allows future integration with cloud databases and AI APIs.
+
+---
+
+## 🎯 Future Improvements
+
+- Cloud database integration (Supabase)
+- User authentication
+- AI-powered personalized risk insights
+- Multi-device sync
