@@ -1,225 +1,336 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  loadMedications,
-  loadDoseLogs,
-  saveDoseLogs,
-  saveMedications,
-  generateId,
-} from "@/lib/storage";
+import { addMedication, searchMedications } from "@/lib/storage";
+import { components } from "@/lib/theme";
 
-export default function Dashboard() {
+export default function AddMedication() {
   const router = useRouter();
-  const [medications, setMedications] = useState([]);
-  const [doseLogs, setDoseLogs] = useState([]);
-  const [adherence, setAdherence] = useState(100);
+  const [form, setForm] = useState({
+    name: "",
+    dosage: "",
+    condition: "",
+    frequency: "once_daily",
+    times: ["09:00"],
+    pillsPerDose: 1,
+    totalPills: 30,
+  });
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (searchQuery.length >= 2) {
+      const results = searchMedications(searchQuery);
+      setSuggestions(results);
+      setShowSuggestions(true);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [searchQuery]);
 
-  function loadData() {
-    const meds = loadMedications();
-    const logs = loadDoseLogs();
-    setMedications(meds);
-    setDoseLogs(logs);
-    calculateAdherence(logs);
-  }
+  const handleSuggestionClick = (medication) => {
+    setForm({
+      ...form,
+      name: medication.name,
+      dosage: medication.defaultDosage,
+      condition: medication.condition,
+    });
+    setSearchQuery(medication.name);
+    setShowSuggestions(false);
+  };
 
-  function calculateAdherence(logs) {
-    const last7Days = logs.filter((log) => {
-      const logDate = new Date(log.date);
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      return logDate >= weekAgo;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    addMedication({
+      name: form.name,
+      dosage: form.dosage,
+      condition: form.condition,
+      frequency: form.frequency,
+      times: form.times,
+      pillsPerDose: form.pillsPerDose,
+      totalPills: form.totalPills,
     });
 
-    if (last7Days.length === 0) {
-      setAdherence(100);
-      return;
-    }
+    router.push("/dashboard");
+  };
 
-    const taken = last7Days.filter((l) => l.status === "taken").length;
-    const score = Math.round((taken / last7Days.length) * 100);
-    setAdherence(score);
-  }
-
-  function logDose(medication, status) {
-    const log = {
-      id: generateId(),
-      medicationId: medication.id,
-      medicationName: medication.name,
-      date: new Date().toISOString(),
-      status: status,
-    };
-
-    const updatedLogs = [...doseLogs, log];
-    saveDoseLogs(updatedLogs);
-
-    if (status === "taken") {
-      const updatedMeds = medications.map((med) => {
-        if (med.id === medication.id) {
-          return { ...med, currentPills: med.currentPills - med.pillsPerDose };
-        }
-        return med;
-      });
-      saveMedications(updatedMeds);
-      setMedications(updatedMeds);
-    }
-
-    loadData();
-  }
-
-  function getDaysLeft(medication) {
-    const { currentPills, pillsPerDose, frequency } = medication;
-    const dosesPerDay =
-      frequency === "once_daily" ? 1 : frequency === "twice_daily" ? 2 : 3;
-    const pillsPerDay = pillsPerDose * dosesPerDay;
-    return Math.floor(currentPills / pillsPerDay);
-  }
+  const frequencyOptions = [
+    { value: "once_daily", label: "Once daily" },
+    { value: "twice_daily", label: "Twice daily" },
+    { value: "three_times", label: "Three times daily" },
+    { value: "four_times", label: "Four times daily" },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-800">MediMind</h1>
-          <button
-            onClick={() => router.push("/medications/add")}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
-          >
-            + Add Medication
-          </button>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Adherence Score */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white mb-8 shadow-xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-blue-100 text-sm mb-2">
-                7-Day Adherence Score
-              </p>
-              <p className="text-6xl font-bold">{adherence}%</p>
-              <p className="mt-2 text-blue-100">
-                {adherence >= 80
-                  ? "🎉 Great job!"
-                  : adherence >= 60
-                    ? "💪 Keep going!"
-                    : "⚠️ Need improvement"}
-              </p>
+      <header className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-5">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => router.back()}
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+                title="Go back"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Add Medication
+                </h1>
+                <p className="text-sm text-gray-600 mt-0.5">
+                  Enter your medication details
+                </p>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-blue-100">Total Medications</p>
-              <p className="text-4xl font-bold">{medications.length}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Medications */}
-        {medications.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-            <p className="text-gray-500 text-lg mb-4">No medications yet</p>
             <button
-              onClick={() => router.push("/medications/add")}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
+              onClick={() => router.push("/")}
+              className="text-gray-600 hover:text-gray-900 transition-colors p-2"
+              title="Back to Home"
             >
-              Add Your First Medication
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                />
+              </svg>
             </button>
           </div>
-        ) : (
-          <div className="grid gap-6">
-            {medications.map((med) => {
-              const daysLeft = getDaysLeft(med);
-              const isLow = daysLeft <= 7;
-              const todayLog = doseLogs.find(
-                (log) =>
-                  log.medicationId === med.id &&
-                  new Date(log.date).toDateString() ===
-                    new Date().toDateString(),
-              );
+        </div>
+      </header>
 
-              return (
-                <div key={med.id} className="bg-white rounded-xl shadow-lg p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-800">
-                        {med.name}
-                      </h3>
-                      <p className="text-gray-600">{med.dosage}</p>
-                      {med.condition && (
-                        <p className="text-sm text-gray-500 mt-1">
-                          {med.condition}
-                        </p>
-                      )}
-                    </div>
-                    <div
-                      className={`px-4 py-2 rounded-lg ${isLow ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}
-                    >
-                      <p className="text-sm font-medium">
-                        {daysLeft} days left
-                      </p>
-                      <p className="text-xs">{med.currentPills} pills</p>
-                    </div>
-                  </div>
+      {/* Form */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Medication Name with Autocomplete */}
+              <div className="relative">
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Medication Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={form.name}
+                  onChange={(e) => {
+                    setForm({ ...form, name: e.target.value });
+                    setSearchQuery(e.target.value);
+                  }}
+                  onFocus={() =>
+                    searchQuery.length >= 2 && setShowSuggestions(true)
+                  }
+                  placeholder="Start typing medication name..."
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder:text-gray-400"
+                />
 
-                  <div className="flex items-center justify-between">
-                    <p className="text-gray-600">Take at: {med.time}</p>
-
-                    {todayLog ? (
-                      <div
-                        className={`px-4 py-2 rounded-lg ${
-                          todayLog.status === "taken"
-                            ? "bg-green-100 text-green-800"
-                            : todayLog.status === "skipped"
-                              ? "bg-gray-100 text-gray-800"
-                              : "bg-yellow-100 text-yellow-800"
-                        }`}
+                {/* Autocomplete Suggestions */}
+                {showSuggestions && suggestions.length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                    {suggestions.map((med, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleSuggestionClick(med)}
+                        className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
                       >
-                        <p className="font-medium capitalize">
-                          {todayLog.status}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => logDose(med, "taken")}
-                          className="bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition"
-                        >
-                          ✓ Taken
-                        </button>
-                        <button
-                          onClick={() => logDose(med, "skipped")}
-                          className="bg-gray-400 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-500 transition"
-                        >
-                          ✗ Skip
-                        </button>
-                        <button
-                          onClick={() => logDose(med, "delayed")}
-                          className="bg-yellow-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-yellow-600 transition"
-                        >
-                          ⏰ Delayed
-                        </button>
-                      </div>
-                    )}
+                        <div className="font-medium text-gray-900">
+                          {med.name}
+                        </div>
+                        <div className="text-sm text-gray-600 mt-1">
+                          {med.defaultDosage} • {med.condition}
+                        </div>
+                      </button>
+                    ))}
                   </div>
+                )}
+              </div>
 
-                  {isLow && (
-                    <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-3 rounded">
-                      <p className="text-red-800 font-medium text-sm">
-                        ⚠️ Refill needed soon! Only {daysLeft} days of
-                        medication left.
+              {/* Dosage */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Dosage *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={form.dosage}
+                  onChange={(e) => setForm({ ...form, dosage: e.target.value })}
+                  placeholder="e.g., 500mg, 10mg, 50mcg"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder:text-gray-400"
+                />
+              </div>
+
+              {/* Condition */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Condition / Purpose
+                </label>
+                <input
+                  type="text"
+                  value={form.condition}
+                  onChange={(e) =>
+                    setForm({ ...form, condition: e.target.value })
+                  }
+                  placeholder="e.g., Type 2 Diabetes, High Blood Pressure"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder:text-gray-400"
+                />
+              </div>
+
+              {/* Frequency */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Frequency *
+                </label>
+                <select
+                  value={form.frequency}
+                  onChange={(e) =>
+                    setForm({ ...form, frequency: e.target.value })
+                  }
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder:text-gray-400"
+                >
+                  {frequencyOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Time */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Scheduled Time *
+                </label>
+                <input
+                  type="time"
+                  required
+                  value={form.times[0]}
+                  onChange={(e) =>
+                    setForm({ ...form, times: [e.target.value] })
+                  }
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder:text-gray-400"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Set the time you typically take this medication
+                </p>
+              </div>
+
+              {/* Pills Information */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Pills per Dose *
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    required
+                    value={form.pillsPerDose}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        pillsPerDose: parseInt(e.target.value),
+                      })
+                    }
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder:text-gray-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Total Pills in Bottle *
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    value={form.totalPills}
+                    onChange={(e) =>
+                      setForm({ ...form, totalPills: parseInt(e.target.value) })
+                    }
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder:text-gray-400"
+                  />
+                </div>
+              </div>
+
+              {/* Refill Prediction Info */}
+              {form.totalPills > 0 && form.pillsPerDose > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+                  <div className="flex items-start gap-3">
+                    <svg
+                      className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <div className="text-sm text-blue-800">
+                      <p className="font-medium mb-1">Refill Estimate</p>
+                      <p>
+                        With {form.totalPills} pills taking {form.pillsPerDose}{" "}
+                        per dose, you have approximately{" "}
+                        <span className="font-semibold">
+                          {Math.floor(form.totalPills / form.pillsPerDose)}{" "}
+                          doses
+                        </span>{" "}
+                        remaining.
                       </p>
                     </div>
-                  )}
+                  </div>
                 </div>
-              );
-            })}
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => router.back()}
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-5 py-2.5 rounded-md transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-md transition-colors duration-200"
+                >
+                  Add Medication
+                </button>
+              </div>
+            </form>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

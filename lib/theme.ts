@@ -67,7 +67,7 @@ export const components = {
     gray: "bg-gray-100 text-gray-700 px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wide",
   },
   input:
-    "w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200",
+    "w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-gray-900 placeholder:text-gray-400",
   label: "block text-sm font-semibold text-gray-700 mb-1.5",
   pageContainer: "min-h-screen bg-gray-50",
   contentContainer: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8",
