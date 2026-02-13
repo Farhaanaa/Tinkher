@@ -12,8 +12,8 @@ import {
 
 export default function Dashboard() {
   const router = useRouter();
-  const [medications, setMedications] = useState<any[]>([]);
-  const [doseLogs, setDoseLogs] = useState<any[]>([]);
+  const [medications, setMedications] = useState([]);
+  const [doseLogs, setDoseLogs] = useState([]);
   const [adherence, setAdherence] = useState(100);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function Dashboard() {
     calculateAdherence(logs);
   }
 
-  function calculateAdherence(logs: any[]) {
+  function calculateAdherence(logs) {
     const last7Days = logs.filter((log) => {
       const logDate = new Date(log.date);
       const weekAgo = new Date();
@@ -46,7 +46,7 @@ export default function Dashboard() {
     setAdherence(score);
   }
 
-  function logDose(medication: any, status: string) {
+  function logDose(medication, status) {
     const log = {
       id: generateId(),
       medicationId: medication.id,
@@ -72,7 +72,7 @@ export default function Dashboard() {
     loadData();
   }
 
-  function getDaysLeft(medication: any) {
+  function getDaysLeft(medication) {
     const { currentPills, pillsPerDose, frequency } = medication;
     const dosesPerDay =
       frequency === "once_daily" ? 1 : frequency === "twice_daily" ? 2 : 3;
@@ -82,6 +82,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-800">MediMind</h1>
@@ -95,6 +96,7 @@ export default function Dashboard() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Adherence Score */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white mb-8 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
@@ -117,6 +119,7 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Medications */}
         {medications.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
             <p className="text-gray-500 text-lg mb-4">No medications yet</p>
