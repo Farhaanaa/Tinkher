@@ -1,9 +1,52 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
+
+  const features = [
+    {
+      title: "Medications",
+      description:
+        "Track your medications, dosages, and schedules in one place",
+      icon: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z",
+      link: "/dashboard",
+      iconBg: "bg-blue-100",
+      iconHover: "group-hover:bg-blue-200",
+      iconColor: "text-blue-600",
+    },
+    {
+      title: "Adherence Score",
+      description: "Monitor your medication adherence with detailed analytics",
+      icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+      link: "/adherence",
+      iconBg: "bg-green-100",
+      iconHover: "group-hover:bg-green-200",
+      iconColor: "text-green-600",
+    },
+    {
+      title: "Refill Alerts",
+      description:
+        "Receive timely notifications when medications need refilling",
+      icon: "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9",
+      link: "/refill",
+      iconBg: "bg-amber-100",
+      iconHover: "group-hover:bg-amber-200",
+      iconColor: "text-amber-600",
+    },
+    {
+      title: "Side Effects",
+      description:
+        "Log and track side effects to share with your healthcare provider",
+      icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+      link: "/side-effects",
+      iconBg: "bg-purple-100",
+      iconHover: "group-hover:bg-purple-200",
+      iconColor: "text-purple-600",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -17,12 +60,12 @@ export default function Home() {
                 Medication Adherence Tracker
               </p>
             </div>
-            <button
-              onClick={() => router.push("/dashboard")}
+            <Link
+              href="/dashboard"
               className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-md transition-colors duration-200"
             >
               Go to Dashboard
-            </button>
+            </Link>
           </div>
         </div>
       </header>
@@ -39,12 +82,12 @@ export default function Home() {
               receive timely refill alerts. A simple, professional tool for
               better health outcomes.
             </p>
-            <button
-              onClick={() => router.push("/medications/add")}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-3 text-lg rounded-md transition-colors duration-200"
+            <Link
+              href="/medications/add"
+              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-8 py-3 text-lg rounded-md transition-colors duration-200"
             >
               Add Your First Medication
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -59,189 +102,63 @@ export default function Home() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Card 1 - Dashboard */}
-          
-            href="/dashboard"
-            className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-200 p-6 block"
-          >
-            <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-4">
-              <svg
-                className="w-6 h-6 text-blue-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          {features.map((feature, index) => (
+            <Link
+              key={index}
+              href={feature.link}
+              className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-200 p-6 group block"
+            >
+              <div
+                className={`w-12 h-12 rounded-lg ${feature.iconBg} ${feature.iconHover} flex items-center justify-center mb-4 transition-colors duration-200`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-                />
-              </svg>
-            </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">
-              Medications
-            </h4>
-            <p className="text-sm text-gray-600 mb-4">
-              Track your medications, dosages, and schedules in one place
-            </p>
-            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Manage
-              </span>
-              <svg
-                className="w-5 h-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </a>
+                <svg
+                  className={`w-6 h-6 ${feature.iconColor}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d={feature.icon}
+                  />
+                </svg>
+              </div>
 
-          {/* Card 2 - Adherence */}
-          
-            href="/adherence"
-            className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-200 p-6 block"
-          >
-            <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mb-4">
-              <svg
-                className="w-6 h-6 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                />
-              </svg>
-            </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">
-              Adherence Score
-            </h4>
-            <p className="text-sm text-gray-600 mb-4">
-              Monitor your medication adherence with detailed analytics
-            </p>
-            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Track
-              </span>
-              <svg
-                className="w-5 h-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </a>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                {feature.title}
+              </h4>
+              <p className="text-sm text-gray-600 mb-4">
+                {feature.description}
+              </p>
 
-          {/* Card 3 - Refill */}
-          
-            href="/refill"
-            className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-200 p-6 block"
-          >
-            <div className="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center mb-4">
-              <svg
-                className="w-6 h-6 text-amber-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                />
-              </svg>
-            </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">
-              Refill Alerts
-            </h4>
-            <p className="text-sm text-gray-600 mb-4">
-              Receive timely notifications when medications need refilling
-            </p>
-            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Alerts
-              </span>
-              <svg
-                className="w-5 h-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </a>
-
-          {/* Card 4 - Side Effects */}
-          
-            href="/side-effects"
-            className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-200 p-6 block"
-          >
-            <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center mb-4">
-              <svg
-                className="w-6 h-6 text-purple-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-            </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">
-              Side Effects
-            </h4>
-            <p className="text-sm text-gray-600 mb-4">
-              Log and track side effects to share with your healthcare provider
-            </p>
-            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Log
-              </span>
-              <svg
-                className="w-5 h-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </a>
+              <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                  {feature.link === "/dashboard"
+                    ? "Manage"
+                    : feature.link === "/adherence"
+                      ? "Track"
+                      : feature.link === "/refill"
+                        ? "Alerts"
+                        : "Log"}
+                </span>
+                <svg
+                  className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
 
