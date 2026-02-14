@@ -26,7 +26,7 @@ AI-Powered Medication Adherence & Risk Prevention System
 
 ### 🌐 Hosted Project Link
 
-(Add your deployed project link here)
+tinkher-git-main-faraanaahs-projects.vercel.app
 
 ---
 
@@ -153,7 +153,9 @@ v
 | (Web Interface) |
 +------------------+
 |
------------------------------------------------------
+
+---
+
 | | |
 v v v
 
@@ -169,7 +171,9 @@ v v v
 | Calculation | | Calculation | | Prediction |
 +----------------+ +----------------+ +----------------+
 | | |
--------------------------------------------
+
+---
+
 |
 v
 +------------------+
