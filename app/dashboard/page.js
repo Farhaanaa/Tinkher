@@ -1,188 +1,285 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { components } from "@/lib/theme";
+import {
+  loadMedications,
+  loadDoseLogs,
+  saveDoseLogs,
+  saveMedications,
+  generateId,
+  deleteMedication,
+} from "@/lib/storage";
 
-export default function Home() {
+export default function Dashboard() {
   const router = useRouter();
+  const [medications, setMedications] = useState([]);
+  const [doseLogs, setDoseLogs] = useState([]);
+  const [adherence, setAdherence] = useState(100);
 
-  const features = [
-    {
-      title: "Medications",
-      description:
-        "Track your medications, dosages, and schedules in one place",
-      icon: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z",
-      link: "/medications/add",
-      stat: "Manage",
-      colorBg: "bg-blue-100",
-      colorHover: "group-hover:bg-blue-200",
-      colorIcon: "text-blue-600",
-    },
-    {
-      title: "Adherence Score",
-      description: "Monitor your medication adherence with detailed analytics",
-      icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
-      link: "/adherence", // ← CHANGED FROM /dashboard TO /adherence
-      stat: "Track",
-      colorBg: "bg-green-100",
-      colorHover: "group-hover:bg-green-200",
-      colorIcon: "text-green-600",
-    },
-    {
-      title: "Refill Alerts",
-      description:
-        "Receive timely notifications when medications need refilling",
-      icon: "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9",
-      link: "/refill",
-      stat: "Alerts",
-      colorBg: "bg-amber-100",
-      colorHover: "group-hover:bg-amber-200",
-      colorIcon: "text-amber-600",
-    },
-    {
-      title: "Side Effects",
-      description:
-        "Log and track side effects to share with your healthcare provider",
-      icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
-      link: "/side-effects",
-      stat: "Log",
-      colorBg: "bg-purple-100",
-      colorHover: "group-hover:bg-purple-200",
-      colorIcon: "text-purple-600",
-    },
-  ];
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  function loadData() {
+    const meds = loadMedications();
+    const logs = loadDoseLogs();
+    setMedications(meds);
+    setDoseLogs(logs);
+    calculateAdherence(logs);
+  }
+
+  function handleDelete(medicationId) {
+    if (confirm("Are you sure you want to delete this medication?")) {
+      deleteMedication(medicationId);
+      loadData();
+    }
+  }
+
+  function calculateAdherence(logs) {
+    const last7Days = logs.filter((log) => {
+      const logDate = new Date(log.date);
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return logDate >= weekAgo;
+    });
+
+    if (last7Days.length === 0) {
+      setAdherence(100);
+      return;
+    }
+
+    const taken = last7Days.filter((l) => l.status === "taken").length;
+    const score = Math.round((taken / last7Days.length) * 100);
+    setAdherence(score);
+  }
+
+  function logDose(medication, status) {
+    const log = {
+      id: generateId(),
+      medicationId: medication.id,
+      medicationName: medication.name,
+      date: new Date().toISOString(),
+      status: status,
+    };
+
+    const updatedLogs = [...doseLogs, log];
+    saveDoseLogs(updatedLogs);
+
+    if (status === "taken") {
+      const updatedMeds = medications.map((med) => {
+        if (med.id === medication.id) {
+          return { ...med, currentPills: med.currentPills - med.pillsPerDose };
+        }
+        return med;
+      });
+      saveMedications(updatedMeds);
+      setMedications(updatedMeds);
+    }
+
+    loadData();
+  }
+
+  function getDaysLeft(medication) {
+    const { currentPills, pillsPerDose, frequency } = medication;
+    const dosesPerDay =
+      frequency === "once_daily"
+        ? 1
+        : frequency === "twice_daily"
+          ? 2
+          : frequency === "three_times"
+            ? 3
+            : 4;
+    const pillsPerDay = pillsPerDose * dosesPerDay;
+    return Math.floor(currentPills / pillsPerDay);
+  }
 
   return (
-    <div className={components.pageContainer}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className={components.contentContainer}>
-          <div className="flex justify-between items-center py-5">
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.push("/")}
+              className="text-gray-600 hover:text-gray-900 transition-colors p-2"
+              title="Back to Home"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                />
+              </svg>
+            </button>
+            <h1 className="text-2xl font-bold text-gray-800">
+              MediMind Dashboard
+            </h1>
+          </div>
+          <button
+            onClick={() => router.push("/medications/add")}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
+          >
+            + Add Medication
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Adherence Score */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white mb-8 shadow-xl">
+          <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">MediMind</h1>
-              <p className="text-sm text-gray-600 mt-0.5">
-                Medication Adherence Tracker
+              <p className="text-blue-100 text-sm mb-2">
+                7-Day Adherence Score
+              </p>
+              <p className="text-6xl font-bold">{adherence}%</p>
+              <p className="mt-2 text-blue-100">
+                {adherence >= 80
+                  ? "Great job!"
+                  : adherence >= 60
+                    ? "Keep going!"
+                    : "Need improvement"}
               </p>
             </div>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className={components.button.primary}
-            >
-              Go to Dashboard
-            </button>
+            <div className="text-right">
+              <p className="text-sm text-blue-100">Total Medications</p>
+              <p className="text-4xl font-bold">{medications.length}</p>
+            </div>
           </div>
         </div>
-      </header>
 
-      {/* Hero Section */}
-      <div className="bg-white border-b border-gray-200">
-        <div className={components.contentContainer}>
-          <div className="max-w-3xl py-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Take Control of Your Medication Management
-            </h2>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              MediMind helps you track medications, monitor adherence, and
-              receive timely refill alerts. A simple, professional tool for
-              better health outcomes.
-            </p>
+        {/* Medications */}
+        {medications.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
+            <p className="text-gray-500 text-lg mb-4">No medications yet</p>
             <button
               onClick={() => router.push("/medications/add")}
-              className={components.button.primary + " text-lg px-8 py-3"}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
             >
               Add Your First Medication
             </button>
           </div>
-        </div>
-      </div>
+        ) : (
+          <div className="grid gap-6">
+            {medications.map((med) => {
+              const daysLeft = getDaysLeft(med);
+              const isLow = daysLeft <= 7;
+              const todayLog = doseLogs.find(
+                (log) =>
+                  log.medicationId === med.id &&
+                  new Date(log.date).toDateString() ===
+                    new Date().toDateString(),
+              );
 
-      {/* Features Grid */}
-      <div className={components.contentContainer}>
-        <div className="mb-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Features</h3>
-          <p className="text-gray-600">
-            Everything you need to manage your medications effectively
-          </p>
-        </div>
+              return (
+                <div key={med.id} className="bg-white rounded-xl shadow-lg p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-800">
+                        {med.name}
+                      </h3>
+                      <p className="text-gray-600">{med.dosage}</p>
+                      {med.condition && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          {med.condition}
+                        </p>
+                      )}
+                    </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, index) => (
-            <button
-              key={index}
-              onClick={() => router.push(feature.link)}
-              className={`${components.cardClickable} p-6 text-left group`}
-            >
-              {/* Icon */}
-              <div
-                className={`w-12 h-12 rounded-lg ${feature.colorBg} ${feature.colorHover} flex items-center justify-center mb-4 transition-colors duration-200`}
-              >
-                <svg
-                  className={`w-6 h-6 ${feature.colorIcon}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d={feature.icon}
-                  />
-                </svg>
-              </div>
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`px-4 py-2 rounded-lg ${isLow ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}
+                      >
+                        <p className="text-sm font-medium">
+                          {daysLeft} days left
+                        </p>
+                        <p className="text-xs">{med.currentPills} pills</p>
+                      </div>
 
-              {/* Content */}
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                {feature.title}
-              </h4>
-              <p className="text-sm text-gray-600 mb-4">
-                {feature.description}
-              </p>
+                      <button
+                        onClick={() => handleDelete(med.id)}
+                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                        title="Delete medication"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
 
-              {/* Action */}
-              <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                  {feature.stat}
-                </span>
-                <svg
-                  className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-200"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
+                  <div className="flex items-center justify-between">
+                    <p className="text-gray-600">Take at: {med.times[0]}</p>
 
-      {/* Stats Section */}
-      <div className="bg-white border-t border-gray-200 mt-16">
-        <div className={components.contentContainer}>
-          <div className="grid md:grid-cols-3 gap-8 py-12">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-gray-900 mb-2">Track</div>
-              <p className="text-gray-600">Medication schedules and dosages</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-gray-900 mb-2">
-                Monitor
-              </div>
-              <p className="text-gray-600">Adherence scores and patterns</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-gray-900 mb-2">Alert</div>
-              <p className="text-gray-600">Refill reminders and warnings</p>
-            </div>
+                    {todayLog ? (
+                      <div
+                        className={`px-4 py-2 rounded-lg ${
+                          todayLog.status === "taken"
+                            ? "bg-green-100 text-green-800"
+                            : todayLog.status === "skipped"
+                              ? "bg-gray-100 text-gray-800"
+                              : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        <p className="font-medium capitalize">
+                          {todayLog.status}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => logDose(med, "taken")}
+                          className="bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition"
+                        >
+                          Taken
+                        </button>
+                        <button
+                          onClick={() => logDose(med, "skipped")}
+                          className="bg-gray-400 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-500 transition"
+                        >
+                          Skip
+                        </button>
+                        <button
+                          onClick={() => logDose(med, "delayed")}
+                          className="bg-yellow-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-yellow-600 transition"
+                        >
+                          Delayed
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {isLow && (
+                    <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-3 rounded">
+                      <p className="text-red-800 font-medium text-sm">
+                        Refill needed soon! Only {daysLeft} days of medication
+                        left.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
