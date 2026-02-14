@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".C:\Users\HP\Downloads\img.png" alt="Tink-her-hack Banner" width="100%">
+  <img src="./img.png" alt="Tink-her-hack Banner" width="100%">
 </p>
 
 # 🧠 MediMind 🎯
