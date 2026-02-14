@@ -26,7 +26,7 @@ AI-Powered Medication Adherence & Risk Prevention System
 
 ### 🌐 Hosted Project Link
 
-tinkher-git-main-faraanaahs-projects.vercel.app
+tinkher.vercel.app
 
 ---
 
