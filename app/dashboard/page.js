@@ -33,7 +33,7 @@ export default function Home() {
       description:
         "Receive timely notifications when medications need refilling",
       icon: "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9",
-      link: "/dashboard",
+      link: "/refill",
       stat: "Alerts",
       colorBg: "bg-amber-100",
       colorHover: "group-hover:bg-amber-200",
@@ -44,7 +44,7 @@ export default function Home() {
       description:
         "Log and track side effects to share with your healthcare provider",
       icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
-      link: "/dashboard",
+      link: "/side-effects",
       stat: "Log",
       colorBg: "bg-purple-100",
       colorHover: "group-hover:bg-purple-200",
