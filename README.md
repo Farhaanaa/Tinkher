@@ -1,65 +1,195 @@
-# 🧠 MediMind
+<p align="center">
+  <img src=".C:\Users\HP\Downloads\img.png" alt="Tink-her-hack Banner" width="100%">
+</p>
+
+# 🧠 MediMind 🎯
 
 AI-Powered Medication Adherence & Risk Prevention System
 
 ---
 
-## 📌 Problem Statement
+## 🏷 Basic Details
 
-Medication non-adherence remains one of the most critical challenges in healthcare today. Studies show that nearly 50% of patients fail to follow prescribed medication schedules, leading to preventable complications, disease progression, and hospitalizations.
+### 👥 Team Name
 
-Missed, delayed, or inconsistent medication intake often goes unnoticed until serious health risks arise. There is a need for a proactive system that not only tracks medication usage but also identifies risk patterns and supports users in maintaining consistent treatment routines.
+**Jupiter**
+
+### 👩‍💻 Team Members
+
+- **Fathima Farhana K N**  
+  Ilahia College of Engineering and Technology, Muvattupuzha
+
+- **Blessy Maria Joseph**  
+  Ilahia College of Engineering and Technology, Muvattupuzha
 
 ---
 
-## 💡 Solution
+### 🌐 Hosted Project Link
 
-MediMind is a smart medication adherence system designed to help individuals track their medications, monitor consistency, and prevent treatment interruptions.
-
-The platform transforms simple medication logs into meaningful insights through adherence scoring, intelligent risk alerts, and refill prediction logic.
+(Add your deployed project link here)
 
 ---
 
-## 🚀 Key Features
+## 📖 Project Description
 
-- 📋 Medication Registration & Schedule Setup
+MediMind is an intelligent medication adherence and risk prevention system designed to help individuals consistently follow prescribed treatment plans.
+
+The platform tracks medication intake, calculates adherence scores, detects risk patterns, and predicts refill needs to prevent treatment interruptions.
+
+---
+
+## ❗ The Problem Statement
+
+Medication non-adherence is a major healthcare challenge worldwide. Nearly 50% of patients fail to follow prescribed medication schedules, leading to preventable complications, hospitalizations, and worsening health outcomes.
+
+There is a need for a proactive, intelligent system that not only tracks medication intake but also identifies behavioral patterns that may indicate potential health risks.
+
+---
+
+## 💡 The Solution
+
+MediMind provides:
+
+- Medication registration and schedule setup
+- Dose logging (Taken / Skipped / Delayed)
+- Real-time adherence score calculation
+- Risk alerts for repeated missed doses
+- Refill prediction based on remaining pill count
+
+The system transforms simple medication logs into meaningful health insights, enabling users to take better control of their treatment routines.
+
+---
+
+# 🛠 Technical Details
+
+## 💻 Technologies/Components Used
+
+### For Software:
+
+- **Languages Used:** JavaScript, TypeScript
+- **Frameworks Used:** Next.js (App Router), React
+- **Libraries Used:** React Hooks
+- **Tools Used:** VS Code, Git, GitHub
+
+---
+
+# ✨ Features
+
+- 📋 Medication Registration
 - ⏰ Dose Logging (Taken / Skipped / Delayed)
-- 📊 Real-time Adherence Score Calculation
-- ⚠️ Risk Alerts for repeated missed doses
-- 💊 Refill Prediction based on remaining pills
-- 📈 Pattern Detection using rule-based logic
+- 📊 Dynamic Adherence Score
+- ⚠️ Intelligent Risk Alerts
+- 💊 Refill Prediction System
+- 📱 Clean & Responsive User Interface
 
 ---
 
-## 🛠️ Tech Stack
+# ⚙ Implementation
 
-- **Framework:** Next.js (App Router)
-- **Language:** TypeScript
-- **State Management:** React State + localStorage
-- **Logic Engine:** Rule-based adherence & risk detection
-- **Deployment:** (Add your hosting link here)
+## 🔧 Installation
 
----
+```bash
+npm install
+```
 
-## 🌍 Live Demo
+## ▶ Run
 
-🔗 Hosted Link: (Add after deployment)
+```bash
+npm run dev
+```
 
----
+Then open:
 
-## ⚙️ MVP Architecture Decision
-
-This hackathon version intentionally uses local state and browser storage instead of a cloud database.
-
-The focus was on building a stable, fully functional MVP under time constraints, ensuring core adherence logic, risk detection, and refill prediction were implemented reliably.
-
-The system is architected in a way that allows future integration with cloud databases and AI APIs.
+```
+http://localhost:3000
+```
 
 ---
 
-## 🎯 Future Improvements
+# 🏗 Architecture Overview
 
-- Cloud database integration (Supabase)
-- User authentication
-- AI-powered personalized risk insights
-- Multi-device sync
+MediMind follows a client-side MVP architecture built for rapid development and stability under hackathon constraints.
+
+The system uses:
+
+- React state management
+- localStorage for persistence
+- Rule-based adherence and risk detection logic
+
+The architecture is modular and scalable, allowing future integration with:
+
+- Cloud databases (e.g., Supabase)
+- User authentication systems
+- AI-powered predictive analytics
+
+---
+
+# 📸 Screenshots
+
+(Add at least 3 screenshots here)
+
+Example:
+
+![Home Page](add-home-screenshot.png)  
+_Home page displaying overview and navigation_
+
+![Add Medication](add-medication-screenshot.png)  
+_Medication registration interface_
+
+![Adherence Dashboard](add-dashboard-screenshot.png)  
+_Adherence score and risk alert display_
+
+---
+
+# 🤖 AI Tools Used (Transparency Section)
+
+**Tools Used:** ChatGPT, Claude
+
+**Purpose:**
+
+- Debugging assistance
+- Code structuring guidance
+- UI refinement suggestions
+- Documentation drafting
+
+**Human Contributions:**
+
+- Architecture design and planning
+- Core medication tracking logic
+- Adherence calculation logic
+- Risk detection rule design
+- UI/UX decisions
+- Integration and testing
+
+---
+
+# 👩‍💻 Team Contributions
+
+### Fathima Farhana K N
+
+- Frontend development
+- Adherence scoring logic
+- UI/UX structuring
+- Project architecture
+- Backend
+
+### Blessy Maria Joseph
+
+- Feature implementation
+- Medication tracking logic
+- Testing and refinement
+- Documentation support
+
+---
+
+# 🚀 Future Enhancements
+
+- Cloud database integration
+- Secure user authentication
+- Multi-device synchronization
+- AI-powered personalized risk analysis
+
+---
+
+Made with ❤️ at TinkerHub  
+**Team Jupiter**
