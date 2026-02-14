@@ -130,16 +130,79 @@ The architecture is modular and scalable, allowing future integration with:
 
 Example:
 
-![Home Page](add-home-screenshot.png)  
+![Home Page](./1.png)  
 _Home page displaying overview and navigation_
 
-![Add Medication](add-medication-screenshot.png)  
+![Add Medication](./2.png)  
 _Medication registration interface_
 
-![Adherence Dashboard](add-dashboard-screenshot.png)  
+![Dashboard](./3.png)  
 _Adherence score and risk alert display_
 
 ---
+
+## 🏗 System Architecture
+
++------------------+
+| USER |
++------------------+
+|
+v
++------------------+
+| MediMind App |
+| (Web Interface) |
++------------------+
+|
+-----------------------------------------------------
+| | |
+v v v
+
++----------------+ +----------------+ +----------------+
+| Log Taken Dose | | Log Skipped | | Inventory |
+| | Delayed Dose | | Monitoring |
++----------------+ +----------------+ +----------------+
+| | |
+v v v
+
++----------------+ +----------------+ +----------------+
+| Adherence | | Risk | | Refill |
+| Calculation | | Calculation | | Prediction |
++----------------+ +----------------+ +----------------+
+| | |
+-------------------------------------------
+|
+v
++------------------+
+| Alert System |
+| - Risk Alerts |
+| - Low Stock |
++------------------+
+|
+v
++------------------+
+| Display |
+| - Adherence % |
+| - Risk Level |
+| - Refill Status |
++------------------+
+
+---
+
+## 🧠 Architecture Explanation
+
+1. The **User** interacts with the MediMind web interface.
+2. The system captures medication behavior:
+   - Taken doses
+   - Skipped or delayed doses
+   - Remaining pill inventory
+3. The logic engine processes:
+   - Adherence calculation
+   - Risk detection
+   - Refill prediction
+4. The Alert System generates:
+   - Risk alerts
+   - Low inventory warnings
+5. Final results are displayed to the user with actionable insights.
 
 # 🤖 AI Tools Used (Transparency Section)
 
